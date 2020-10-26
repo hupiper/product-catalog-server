@@ -32,13 +32,13 @@ components:
         name: MAVEN_OPTS
 apiVersion: 1.0.0
 commands:
-  - name: Package application
+  - name: Build
     actions:
       - workdir: '${CHE_PROJECTS_ROOT}/product-catalog-server'
         type: exec
-        command: mvn package
+        command: MAVEN_OPTS="-Xmx256m" && mvn package
         component: maven
-  - name: Run in devmode
+  - name: Run
     actions:
       - workdir: '${CHE_PROJECTS_ROOT}/product-catalog-server'
         type: exec
