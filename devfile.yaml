@@ -1,9 +1,9 @@
 metadata:
   name: product-catalog-server
 projects:
-  - name: quarkus-quickstarts
+  - name: product-catalog-server
     source:
-      location: 'git@github.com:gnunn-gitops/product-catalog-server.git'
+      location: 'https://github.com/gnunn-gitops/product-catalog-server.git'
       type: 'git'
 components:
   - id: redhat/quarkus-java11/latest
