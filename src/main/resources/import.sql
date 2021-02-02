@@ -3,7 +3,6 @@ INSERT INTO `categories` (`id`, `name`, `description`, `created`, `modified`) VA
 (2, 'Tablet', 'A small smartphone-laptop mix', PARSEDATETIME('2015-08-02 23:56:46','yyyy-MM-dd HH:mm:ss','en'), PARSEDATETIME('2016-12-20 06:51:42','yyyy-MM-dd HH:mm:ss','en')),
 (3, 'Ultrabook', 'Ultra portable and powerful laptop', PARSEDATETIME('2016-12-20 13:51:15','yyyy-MM-dd HH:mm:ss','en'), PARSEDATETIME('2016-12-20 06:51:52','yyyy-MM-dd HH:mm:ss','en'));
 
-
 INSERT INTO `products` (`id`, `name`, `description`, `price`, `category_id`, `created`, `modified`) VALUES
 (1, 'ASUS Zenbook 3', 'The most powerful and ultraportable Zenbook ever', 1799, 3, PARSEDATETIME('2020-04-04 14:21:15','yyyy-MM-dd HH:mm:ss','en'), PARSEDATETIME('2020-04-04 14:21:15','yyyy-MM-dd HH:mm:ss','en')),
 (2, 'Dell XPS 13', 'Super powerful and portable ultrabook with ultra thin bezel infinity display', 2199, 3, PARSEDATETIME('2016-12-20 13:53:34','yyyy-MM-dd HH:mm:ss','en'), PARSEDATETIME('2016-12-20 06:53:34','yyyy-MM-dd HH:mm:ss','en')),
