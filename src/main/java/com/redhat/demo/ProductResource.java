@@ -53,7 +53,6 @@ public class ProductResource {
 
     private static final Logger log = LoggerFactory.getLogger("ProductResource");
 
-
     @GET
     @Operation(summary = "Get product list", description = "Get product list with support for paging and ordering")
     @Counted(name = "countGetProduct", description = "How many get product calls have been performed.", tags = {"type=counter","api=product", "method=getProduct"} )
