@@ -81,7 +81,6 @@ public class ProductResource {
         return products.toArray(new Product[0]);
     }
 
-
     @GET
     @Path("{id}")
     @Operation(summary = "Get product by ID", description = "Get specific product by it's ID")
@@ -162,10 +161,9 @@ public class ProductResource {
             }
             return Response.status(Response.Status.OK).entity("true").build();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Failed to delete products", e);
             return Response.status(500).entity("false").build();
         }
-
     }
 
     @PUT
