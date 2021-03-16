@@ -100,7 +100,7 @@ public class AuthResource {
             user.persist();
             return Response.status(Response.Status.OK).entity("true").build();
         } catch (Exception e) {
-            log.error("Failed to register user " + email, e);
+            log.error(String.format("Failed to register user %s", email), e);
             throw new WebApplicationException("User could not be saved", 500);
         }
     }
