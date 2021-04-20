@@ -12,6 +12,10 @@ components:
     endpoints:
       - name: 8080-tcp
         port: 8080
+      - name: 'debug'
+        port: 5005
+        attributes:
+          public: 'false'
     memoryLimit: 1Gi
     type: dockerimage
     volumes:
@@ -62,7 +66,8 @@ commands:
         component: maven
   - name: Attach remote debugger
     actions:
-      - referenceContent: |
+      - type: vscode-launch
+        referenceContent: |
           {
             "version": "0.2.0",
             "configurations": [
@@ -75,4 +80,3 @@ commands:
               }
             ]
           }
-        type: vscode-launch
