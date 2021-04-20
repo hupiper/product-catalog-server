@@ -58,7 +58,7 @@ commands:
     actions:
       - workdir: '${CHE_PROJECTS_ROOT}/product-catalog-server'
         type: exec
-        command: 'mvn compile quarkus:dev'
+        command: 'mvn compile quarkus:dev -Dquarkus.profile=dev'
         component: maven
   - name: Attach remote debugger
     actions:
