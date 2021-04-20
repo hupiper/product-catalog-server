@@ -12,7 +12,7 @@ components:
     endpoints:
       - name: 8080-tcp
         port: 8080
-    memoryLimit: 512Mi
+    memoryLimit: 1Gi
     type: dockerimage
     volumes:
       - name: m2
