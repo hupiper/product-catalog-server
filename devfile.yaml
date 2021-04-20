@@ -30,6 +30,8 @@ components:
         name: JAVA_OPTS
       - value: $(JAVA_OPTS)
         name: MAVEN_OPTS
+  - type: kubernetes
+    reference: codeready/mariadb.yaml
 apiVersion: 1.0.0
 commands:
   - name: Build

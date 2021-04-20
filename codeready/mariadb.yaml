@@ -1,0 +1,229 @@
+apiVersion: v1
+data:
+  90-init-database.sh: |-
+    init_database() {
+        local thisdir
+        local init_data_file
+        thisdir=$(dirname ${BASH_SOURCE[0]})
+
+        init_data_file=$(readlink -f ${thisdir}/../mysql-data/schema.sql)
+        log_info "Initializing the database schema from file ${init_data_file}..."
+        mysql $mysql_flags ${MYSQL_DATABASE} < ${init_data_file}
+
+        init_data_file=$(readlink -f ${thisdir}/../mysql-data/import.sql)
+        log_info "Initializing the database data from file ${init_data_file}..."
+        mysql $mysql_flags ${MYSQL_DATABASE} < ${init_data_file}
+    }
+
+    if ! [ -v MYSQL_RUNNING_AS_SLAVE ] && $MYSQL_DATADIR_FIRST_INIT ; then
+        init_database
+    fi
+  import.sql: |
+    INSERT INTO `categories` (`id`, `name`, `description`, `created`, `modified`) VALUES
+    (1, 'Smartphone', 'Not a stupid phone', '2015-08-02 23:56:46', '2016-12-20 06:51:25'),
+    (2, 'Tablet', 'A small smartphone-laptop mix', '2015-08-02 23:56:46', '2016-12-20 06:51:42'),
+    (3, 'Ultrabook', 'Ultra portable and powerful laptop', '2016-12-20 13:51:15', '2016-12-20 06:51:52');
+
+    INSERT INTO `products` (`id`, `name`, `description`, `price`, `category_id`, `created`, `modified`) VALUES
+    (1, 'ASUS Zenbook 3', 'The most powerful and ultraportable Zenbook ever', 1799, 3, '2016-12-20 13:53:00', '2016-12-20 06:53:00'),
+    (2, 'Dell XPS 13', 'Super powerful and portable ultrabook with ultra thin bezel infinity display', 2199, 3, '2016-12-20 13:53:34', '2016-12-20 06:53:34'),
+    (3, 'Samsung Galaxy S7', 'Define what a phone can do', 649, 1, '2016-12-20 13:54:16', '2016-12-20 06:54:16'),
+    (4, 'Samsung Galaxy Tab S2', 'Latest Generation of Samsung Galaxy Tab Series tablet', 599, 2, '2016-12-20 13:54:43', '2016-12-20 06:54:43'),
+    (5, 'Apple iPad Pro', 'Powerful, thin, and light tablet from Apple', 899, 2, '2016-12-20 13:55:02', '2016-12-20 06:55:02'),
+    (6, 'Google Pixel', 'World''s leading smartphone camera, first phone by Google.', 649, 1, '2016-12-20 13:55:23', '2016-12-20 06:55:23'),
+    (7, 'Oneplus 3T', 'Never Settle', 439, 1, '2016-12-20 13:59:06', '2016-12-20 06:59:06'),
+    (8, 'Asus Zenfone 3 Deluxe', 'Super powerful and gorgeously designed phablet', 799, 1, '2016-12-20 13:59:37', '2016-12-20 06:59:37'),
+    (9, 'Xiaomi Mi Mix', 'Bezelless. Powerful. Gorgeous.', 699, 1, '2016-12-20 14:00:20', '2016-12-20 07:00:20'),
+    (10, 'Huawei P9', 'First Leica Branded Dual-camera Smartphone', 499, 1, '2016-12-20 14:00:45', '2016-12-20 07:00:45'),
+    (11, 'Xiaomi Mi 5S', 'First Xiaomi smartphone to come with light-sensitive camera', 349, 1, '2016-12-20 14:01:40', '2016-12-20 07:10:14'),
+    (12, 'LG V20', 'Superb dual camera, Space-grade Aluminum build, fantastic sound quality', 749, 1, '2016-12-20 14:02:28', '2016-12-20 07:02:28');
+
+    INSERT INTO `users` (`id`, `email`, `password_hash`, `salt`, `iteration_count`, `created_at`) VALUES
+    (1, 'demo@demo.com', '/TVyvAPSryEfGlyEFmNq14Q/prbJU7U=', 'YYONLJPUCmUeISgDxyTREg==', 10, '2019-11-23 02:54:42');
+  schema.sql: |-
+    DROP TABLE IF EXISTS `categories`;
+
+    CREATE TABLE `categories` (
+        `id` int(11) NOT NULL AUTO_INCREMENT,
+        `created` date DEFAULT NULL,
+        `description` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+        `modified` datetime(6) DEFAULT NULL,
+        `name` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL,
+        PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+    --
+    -- Table structure for table `products`
+    --
+
+    DROP TABLE IF EXISTS `products`;
+
+    CREATE TABLE `products` (
+        `id` int(11) NOT NULL AUTO_INCREMENT,
+        `created` date DEFAULT NULL,
+        `description` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+        `modified` datetime(6) DEFAULT NULL,
+        `name` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL,
+        `price` double NOT NULL,
+        `category_id` int(11) NOT NULL,
+        PRIMARY KEY (`id`),
+        KEY `FKog2rp4qthbtt2lfyhfo32lsw9` (`category_id`),
+        CONSTRAINT `FKog2rp4qthbtt2lfyhfo32lsw9` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`)
+    ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+    --
+    -- Table structure for table `users`
+    --
+
+    DROP TABLE IF EXISTS `users`;
+
+    CREATE TABLE `users` (
+        `id` int(11) NOT NULL AUTO_INCREMENT,
+        `created_at` datetime(6) DEFAULT NULL,
+        `email` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+        `iteration_count` int(11) DEFAULT NULL,
+        `password_hash` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+        `salt` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+        PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/part-of: product-catalog
+  name: productdb-init
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  annotations:
+    template.openshift.io/expose-database_name: '{.data[''database-name'']}'
+    template.openshift.io/expose-password: '{.data[''database-password'']}'
+    template.openshift.io/expose-root_password: '{.data[''database-root-password'']}'
+    template.openshift.io/expose-username: '{.data[''database-user'']}'
+  labels:
+    app: server
+    app.kubernetes.io/component: database
+    app.kubernetes.io/instance: productdb
+    app.kubernetes.io/name: productdb
+    app.kubernetes.io/part-of: product-catalog
+  name: productdb
+stringData:
+  database-name: productdb
+  database-password: Demo1234
+  database-root-password: Demo1234
+  database-user: productdb
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: server
+    app.kubernetes.io/component: database
+    app.kubernetes.io/instance: productdb
+    app.kubernetes.io/name: productdb
+    app.kubernetes.io/part-of: product-catalog
+  name: productdb
+spec:
+  ports:
+  - name: tcp
+    port: 3306
+  selector:
+    name: productdb
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: productdb
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: productdb
+    app.kubernetes.io/component: database
+    app.kubernetes.io/instance: database
+    app.kubernetes.io/name: productdb
+    app.kubernetes.io/part-of: product-catalog
+    app.openshift.io/runtime: mariadb
+  name: productdb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: productdb
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        alpha.image.policy.openshift.io/resolve-names: '*'
+      labels:
+        name: productdb
+    spec:
+      containers:
+      - env:
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              key: database-user
+              name: productdb
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: database-password
+              name: productdb
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: database-root-password
+              name: productdb
+        - name: MYSQL_DATABASE
+          valueFrom:
+            secretKeyRef:
+              key: database-name
+              name: productdb
+        image: registry.redhat.io/rhel8/mariadb-103:1
+        imagePullPolicy: Always
+        livenessProbe:
+          initialDelaySeconds: 30
+          tcpSocket:
+            port: 3306
+          timeoutSeconds: 1
+        name: productdb
+        ports:
+        - containerPort: 3306
+        readinessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -i
+            - -c
+            - MYSQL_PWD="$MYSQL_PASSWORD" mysql -h 127.0.0.1 -u $MYSQL_USER -D $MYSQL_DATABASE
+              -e 'SELECT 1'
+          initialDelaySeconds: 5
+          timeoutSeconds: 1
+        volumeMounts:
+        - mountPath: /var/lib/mysql/data
+          name: productdb-data
+        - mountPath: /opt/app-root/src/mysql-init/90-init-data.sh
+          name: productdb-init
+          subPath: 90-init-database.sh
+        - mountPath: /opt/app-root/src/mysql-data/import.sql
+          name: productdb-init
+          subPath: import.sql
+        - mountPath: /opt/app-root/src/mysql-data/schema.sql
+          name: productdb-init
+          subPath: schema.sql
+      volumes:
+      - name: productdb-data
+        persistentVolumeClaim:
+          claimName: productdb
+      - configMap:
+          name: productdb-init
+        name: productdb-init
