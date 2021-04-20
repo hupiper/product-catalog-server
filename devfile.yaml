@@ -30,8 +30,22 @@ components:
         name: JAVA_OPTS
       - value: $(JAVA_OPTS)
         name: MAVEN_OPTS
-  - type: kubernetes
-    reference: codeready/mariadb.yaml
+  - alias: productdb
+    endpoints:
+      - name: productdb
+        port: 3306
+    memoryLimit: 1024Mi
+    type: dockerimage
+    image: 'registry.redhat.io/rhel8/mariadb-103:1'
+    env:
+      - value: productdb
+        name: MYSQL_USER
+      - value: Demo1234
+        name: MYSQL_PASSWORD
+      - value: productdb
+        name: MYSQL_DATABASE
+  # - type: kubernetes
+  #   reference: codeready/mariadb.yaml
 apiVersion: 1.0.0
 commands:
   - name: Build
