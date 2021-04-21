@@ -23,7 +23,7 @@ components:
         containerPath: /home/jboss/.m2
     image: >-
       registry.redhat.io/codeready-workspaces/plugin-java11-rhel8:latest
-    alias: product-catalog
+    alias: product-catalog-server
     env:
       - value: >-
           -XX:MaxRAMPercentage=50.0 -XX:+UseParallelGC -XX:MinHeapFreeRatio=10
@@ -57,13 +57,13 @@ commands:
       - workdir: '${CHE_PROJECTS_ROOT}/product-catalog-server'
         type: exec
         command: MAVEN_OPTS="-Xmx256m" && mvn package
-        component: maven
+        component: product-catalog-server
   - name: Run
     actions:
       - workdir: '${CHE_PROJECTS_ROOT}/product-catalog-server'
         type: exec
         command: 'mvn compile quarkus:dev -Dquarkus.profile=dev'
-        component: maven
+        component: product-catalog-server
   - name: Attach remote debugger
     actions:
       - type: vscode-launch
