@@ -50,6 +50,8 @@ components:
         name: MYSQL_PASSWORD
       - value: productdb
         name: MYSQL_DATABASE
+  - id: sonarsource/sonarlint-vscode/latest
+    type: chePlugin
   # - type: kubernetes
   #   reference: codeready/mariadb.yaml
 apiVersion: 1.0.0
