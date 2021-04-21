@@ -12,11 +12,12 @@ components:
     endpoints:
       - name: 8080-tcp
         port: 8080
+        attributes:
+          path: '/swagger-ui'
       - name: 'debug'
         port: 5005
         attributes:
           public: 'false'
-          path: '/swagger-ui'
     memoryLimit: 1Gi
     type: dockerimage
     volumes:
