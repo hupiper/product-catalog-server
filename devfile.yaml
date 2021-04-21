@@ -16,6 +16,7 @@ components:
         port: 5005
         attributes:
           public: 'false'
+          path: '/swagger-ui'
     memoryLimit: 1Gi
     type: dockerimage
     volumes:
