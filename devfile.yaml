@@ -36,6 +36,10 @@ components:
         name: JAVA_OPTS
       - value: $(JAVA_OPTS)
         name: MAVEN_OPTS
+  - alias: podman
+    memoryLimit: 128Mi
+    type: dockerimage
+    image: registry.redhat.io/rhel8/podman
   - alias: productdb
     endpoints:
       - name: productdb
