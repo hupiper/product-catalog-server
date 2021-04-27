@@ -21,7 +21,7 @@ public class VersionResource {
     @Counted(name = "countGetVersion", description = "How many get version calls have been performed.", tags = {"type=counter","api=version", "method=getVersion"} )
     @Timed(name = "perfGetVersion", description = "A measure of how long it takes to get version.", unit = MetricUnits.MILLISECONDS, tags = {"type=perf","api=version", "method=getVersion"})
     public String get() {
-        return "1.0.1";
+        return "1.0.0";
     }
 
 }
