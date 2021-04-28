@@ -37,9 +37,17 @@ components:
       - value: $(JAVA_OPTS)
         name: MAVEN_OPTS
   - alias: podman
+    mountSources: true
     memoryLimit: 128Mi
     type: dockerimage
     image: registry.redhat.io/rhel8/podman
+    command: ['tail']
+    args: ['-f', '/dev/null']
+  - alias: buildah
+    mountSources: true
+    memoryLimit: 128Mi
+    type: dockerimage
+    image: registry.redhat.io/rhel8/buildah
     command: ['tail']
     args: ['-f', '/dev/null']
   - alias: productdb
