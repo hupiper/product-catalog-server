@@ -36,20 +36,6 @@ components:
         name: JAVA_OPTS
       - value: $(JAVA_OPTS)
         name: MAVEN_OPTS
-  - alias: podman
-    mountSources: true
-    memoryLimit: 128Mi
-    type: dockerimage
-    image: registry.redhat.io/rhel8/podman
-    command: ['tail']
-    args: ['-f', '/dev/null']
-  - alias: buildah
-    mountSources: true
-    memoryLimit: 128Mi
-    type: dockerimage
-    image: registry.redhat.io/rhel8/buildah
-    command: ['tail']
-    args: ['-f', '/dev/null']
   - alias: productdb
     endpoints:
       - name: productdb
@@ -68,6 +54,8 @@ components:
     type: chePlugin
   # - type: kubernetes
   #   reference: codeready/mariadb.yaml
+  - id: containers/buildah/latest
+    type: chePlugin
 apiVersion: 1.0.0
 commands:
   - name: Build
