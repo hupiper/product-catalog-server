@@ -39,8 +39,10 @@ components:
   - alias: buildah
     mountSources: true
     type: dockerimage
-    image: 'quay.io/eclipse/che-buildah-base:1.14.0-b0c91d3'
+    image: 'registry.redhat.io/rhel8/buildah:latest'
     memoryLimit: 1Gi
+    command: ['tail']
+    args: ['-f', '/dev/null']
   - alias: productdb
     endpoints:
       - name: productdb
