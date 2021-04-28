@@ -40,6 +40,8 @@ components:
     memoryLimit: 128Mi
     type: dockerimage
     image: registry.redhat.io/rhel8/podman
+    command: ['tail']
+    args: ['-f', '/dev/null']
   - alias: productdb
     endpoints:
       - name: productdb
