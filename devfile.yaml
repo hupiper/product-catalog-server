@@ -36,6 +36,11 @@ components:
         name: JAVA_OPTS
       - value: $(JAVA_OPTS)
         name: MAVEN_OPTS
+  - alias: buildah
+    mountSources: true
+    type: dockerimage
+    image: 'quay.io/eclipse/che-buildah-base:1.14.0-b0c91d3'
+    memoryLimit: 1Gi
   - alias: productdb
     endpoints:
       - name: productdb
@@ -54,8 +59,6 @@ components:
     type: chePlugin
   # - type: kubernetes
   #   reference: codeready/mariadb.yaml
-  - id: containers/buildah/latest
-    type: chePlugin
 apiVersion: 1.0.0
 commands:
   - name: Build
