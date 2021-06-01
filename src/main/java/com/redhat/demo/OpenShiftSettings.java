@@ -30,7 +30,7 @@ public class OpenShiftSettings {
     void onStart(@Observes StartupEvent ev) {
         // Test if we are running in a pod
         String k8sSvcHost = System.getenv("KUBERNETES_SERVICE_HOST");
-        if (k8sSvcHost ==null || !"".equals(k8sSvcHost)) {
+        if (k8sSvcHost == null || "".equals(k8sSvcHost)) {
             LOGGER.info("Not running in kubernetes, using CORS_ORIGIN environment variable");
             return;
         }
