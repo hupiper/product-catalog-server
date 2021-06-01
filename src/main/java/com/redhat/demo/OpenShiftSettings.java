@@ -31,7 +31,7 @@ public class OpenShiftSettings {
         // Test if we are running in a pod
         String k8sSvcHost = System.getenv("KUBERNETES_SERVICE_HOST");
         if (k8sSvcHost == null || "".equals(k8sSvcHost)) {
-            LOGGER.info("Not running in kubernetes, using CORS_ORIGIN environment variable");
+            LOGGER.infof("Not running in kubernetes, using CORS_ORIGIN environment '%s' variable",ConfigProvider.getConfig().getValue("quarkus.http.cors.origins", String.class));
             return;
         }
         // Look for route with label endpoint:client
@@ -63,8 +63,8 @@ public class OpenShiftSettings {
             }
             String corsOrigin = (tls?"https":"http") + "://" + host;
             System.setProperty("quarkus.http.cors.origins", corsOrigin);
-            LOGGER.infof("Using host %s for cors origin", ConfigProvider.getConfig().getValue("quarkus.http.cors.origins", String.class));
         }
+        LOGGER.infof("Using host %s for cors origin", ConfigProvider.getConfig().getValue("quarkus.http.cors.origins", String.class));
     }
 
     private LabelSelector LabelSelectorBuilder() {
