@@ -34,13 +34,13 @@ public class OpenShiftSettings {
             LOGGER.info("Not running in kubernetes, using CORS_ORIGIN environment variable");
             return;
         }
-        // Look for route with label endpoint:server
+        // Look for route with label endpoint:client
         if (openshiftClient.getMasterUrl() == null) {
             LOGGER.info("Kubernetes context is not available");
         } else {
             LOGGER.infof("Application is running in OpenShift %s, checking for labelled route", openshiftClient.getMasterUrl());
 
-            LabelSelector selector = new LabelSelectorBuilder().withMatchLabels(Map.ofEntries(entry("endpoint", "server"))).build();
+            LabelSelector selector = new LabelSelectorBuilder().withMatchLabels(Map.ofEntries(entry("endpoint", "client"))).build();
             List<Route> routes = null;
             try {
                 routes = openshiftClient.routes().withLabelSelector(selector).list().getItems();
@@ -49,10 +49,10 @@ public class OpenShiftSettings {
                 return;
             }
             if (routes == null || routes.size() ==0 ) {
-                LOGGER.info("No routes found with label 'endpoint:server', using environment variable CORS_ORIGIN");
+                LOGGER.info("No routes found with label 'endpoint:client', using environment variable CORS_ORIGIN");
                 return;
             } else if (routes.size() > 1 ) {
-                LOGGER.warn("More then one route found with 'endpoint:server', using first one");
+                LOGGER.warn("More then one route found with 'endpoint:client', using first one");
             }
 
             Route route = routes.get(0);
