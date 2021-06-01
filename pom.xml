@@ -24,11 +24,11 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <quarkus.version>1.13.6.Final</quarkus.version>
     <resources-plugin.version>3.1.0</resources-plugin.version>
-    <surefire-plugin.version>2.22.0</surefire-plugin.version>
-    <sonar.projectKey>product-catalog-server</sonar.projectKey>
     <sonar.issue.ignore.multicriteria>e1</sonar.issue.ignore.multicriteria>
-    <sonar.issue.ignore.multicriteria.e1.ruleKey>java:S3252</sonar.issue.ignore.multicriteria.e1.ruleKey>
     <sonar.issue.ignore.multicriteria.e1.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e1.resourceKey>
+    <sonar.issue.ignore.multicriteria.e1.ruleKey>java:S3252</sonar.issue.ignore.multicriteria.e1.ruleKey>
+    <sonar.projectKey>product-catalog-server</sonar.projectKey>
+    <surefire-plugin.version>2.22.0</surefire-plugin.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -125,6 +125,10 @@
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-container-image-s2i</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-openshift-client</artifactId>
     </dependency>
   </dependencies>
   <build>
