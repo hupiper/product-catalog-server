@@ -31,16 +31,25 @@ public class OpenShiftSettings {
         // Test if we are running in a pod
         String k8sSvcHost = System.getenv("KUBERNETES_SERVICE_HOST");
         if (k8sSvcHost == null || "".equals(k8sSvcHost)) {
-            LOGGER.infof("Not running in kubernetes, using CORS_ORIGIN environment '%s' variable",ConfigProvider.getConfig().getValue("quarkus.http.cors.origins", String.class));
+            LOGGER.infof("Not running in kubernetes, using CORS_ORIGIN environment '%s' variable",
+                    ConfigProvider.getConfig().getValue("quarkus.http.cors.origins", String.class));
             return;
         }
+
+        if (System.getenv("CORS_ORIGIN") != null) {
+            LOGGER.infof("CORS_ORIGIN explicitly defined bypassing route lookup");
+            return;
+        }
+
         // Look for route with label endpoint:client
         if (openshiftClient.getMasterUrl() == null) {
             LOGGER.info("Kubernetes context is not available");
         } else {
-            LOGGER.infof("Application is running in OpenShift %s, checking for labelled route", openshiftClient.getMasterUrl());
+            LOGGER.infof("Application is running in OpenShift %s, checking for labelled route",
+                    openshiftClient.getMasterUrl());
 
-            LabelSelector selector = new LabelSelectorBuilder().withMatchLabels(Map.ofEntries(entry("endpoint", "client"))).build();
+            LabelSelector selector = new LabelSelectorBuilder()
+                    .withMatchLabels(Map.ofEntries(entry("endpoint", "client"))).build();
             List<Route> routes = null;
             try {
                 routes = openshiftClient.routes().withLabelSelector(selector).list().getItems();
@@ -48,10 +57,10 @@ public class OpenShiftSettings {
                 LOGGER.info("Unexpected error occurred retrieving routes, using environment variable CORS_ORIGIN", e);
                 return;
             }
-            if (routes == null || routes.size() ==0 ) {
+            if (routes == null || routes.size() == 0) {
                 LOGGER.info("No routes found with label 'endpoint:client', using environment variable CORS_ORIGIN");
                 return;
-            } else if (routes.size() > 1 ) {
+            } else if (routes.size() > 1) {
                 LOGGER.warn("More then one route found with 'endpoint:client', using first one");
             }
 
@@ -61,18 +70,14 @@ public class OpenShiftSettings {
             if (route.getSpec().getTls() != null && "".equals(route.getSpec().getTls().getTermination())) {
                 tls = true;
             }
-            String corsOrigin = (tls?"https":"http") + "://" + host;
+            String corsOrigin = (tls ? "https" : "http") + "://" + host;
             System.setProperty("quarkus.http.cors.origins", corsOrigin);
         }
-        LOGGER.infof("Using host %s for cors origin", ConfigProvider.getConfig().getValue("quarkus.http.cors.origins", String.class));
-    }
-
-    private LabelSelector LabelSelectorBuilder() {
-        return null;
+        LOGGER.infof("Using host %s for cors origin",
+                ConfigProvider.getConfig().getValue("quarkus.http.cors.origins", String.class));
     }
 
     void onStop(@Observes ShutdownEvent ev) {
         LOGGER.info("The application is stopping...");
     }
-
 }
