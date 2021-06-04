@@ -42,7 +42,6 @@ public class UserResource {
     }
 
     @POST
-    @Authenticated
     @Operation(summary = "Create user", description = "Create a new user")
     public Response create(User user) {
         if (user.id != null) {
