@@ -1,6 +1,8 @@
 package com.redhat.demo;
 
 import java.util.Map;
+import java.util.Optional;
+
 import static java.util.Map.entry;
 
 import java.util.List;
@@ -17,6 +19,7 @@ import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.runtime.StartupEvent;
 
 import org.eclipse.microprofile.config.ConfigProvider;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 
 @ApplicationScoped
@@ -27,16 +30,24 @@ public class OpenShiftSettings {
     @Inject
     OpenShiftClient openshiftClient;
 
+    @ConfigProperty(name = "kubernetes.service.host")
+    Optional<String> kubernetesServiceHost;
+
+    @ConfigProperty(name = "quarkus.http.cors.origins")
+    Optional<String> corsOrigin;
+
     void onStart(@Observes StartupEvent ev) {
         // Test if we are running in a pod
-        String k8sSvcHost = System.getenv("KUBERNETES_SERVICE_HOST");
-        if (k8sSvcHost == null || "".equals(k8sSvcHost)) {
-            LOGGER.infof("Not running in kubernetes, using CORS_ORIGIN environment '%s' variable",
-                    ConfigProvider.getConfig().getValue("quarkus.http.cors.origins", String.class));
+        if (kubernetesServiceHost.isEmpty()) {
+            if (corsOrigin.isPresent()) {
+                LOGGER.infof("Not running in kubernetes, using CORS_ORIGIN environment '%s' variable", corsOrigin.get());
+            } else {
+                LOGGER.warnf("Not running in kubernetes, no CORS_ORIGIN environment is set");
+            }
             return;
         }
 
-        if (System.getenv("CORS_ORIGIN") != null) {
+        if (corsOrigin.isPresent()) {
             LOGGER.infof("CORS_ORIGIN explicitly defined bypassing route lookup");
             return;
         }
