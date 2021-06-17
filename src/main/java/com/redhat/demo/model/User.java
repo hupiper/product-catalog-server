@@ -4,10 +4,10 @@ import static org.wildfly.security.password.interfaces.BCryptPassword.ALGORITHM_
 import static org.wildfly.security.password.interfaces.BCryptPassword.BCRYPT_SALT_SIZE;
 
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.time.LocalDateTime;
 import java.util.Base64;
-import java.util.concurrent.ThreadLocalRandom;
 
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
@@ -87,7 +87,8 @@ public class User extends PanacheEntityBase {
 
     private static byte[] generateRandomSalt(final int saltSize) {
         final byte[] randomSalt = new byte[saltSize];
-        ThreadLocalRandom.current().nextBytes(randomSalt);
+        SecureRandom random = new SecureRandom();
+        random.nextBytes(randomSalt);
         return randomSalt;
     }
 
