@@ -1,6 +1,5 @@
 package com.redhat.demo;
 
-import javax.annotation.security.PermitAll;
 import javax.enterprise.context.ApplicationScoped;
 import javax.json.Json;
 import javax.ws.rs.Consumes;
@@ -35,7 +34,6 @@ import io.quarkus.security.Authenticated;
 public class CategoryResource {
 
     @GET
-    @PermitAll
     @Counted(name = "countGetCategory", description = "How many get categories calls have been performed.", tags = {"type=counter", "api=category", "method=getCategory"})
     @Timed(name = "perfGetCategory", description = "A measure of how long it takes to get categories.", unit = MetricUnits.MILLISECONDS, tags = {"type=perf", "api=category", "method=getCategory"})
     public Category[] get() {
@@ -44,7 +42,6 @@ public class CategoryResource {
 
     @GET
     @Path("{id}")
-    @PermitAll
     @Operation(summary = "Get category", description = "Get specific category by ID")
     @Counted(name = "countGetCategorybyId", description = "How many get category by ID calls have been performed.", tags = {"type=counter", "api=category", "method=getCategoryById"})
     @Timed(name = "perfGetCategoryById", description = "A measure of how long it takes to get category by ID.", unit = MetricUnits.MILLISECONDS, tags = {"type=perf", "api=category", "method=getCategoryById"})

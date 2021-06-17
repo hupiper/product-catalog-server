@@ -3,7 +3,6 @@ package com.redhat.demo;
 import java.security.Principal;
 import java.time.LocalDateTime;
 
-import javax.annotation.security.PermitAll;
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
@@ -39,7 +38,6 @@ public class AuthResource {
 
     @GET
     @Path("/user")
-    @PermitAll
     @Operation(summary = "Get user", description = "Get the current user")
     public User getUser(@Context SecurityContext sc) {
         if (sc.getUserPrincipal() !=null) {
@@ -50,7 +48,6 @@ public class AuthResource {
     }
 
     @POST
-    @PermitAll
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Login", description = "Authenticate a user")
@@ -72,7 +69,6 @@ public class AuthResource {
 
     @POST
     @Path("/register")
-    @PermitAll
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.TEXT_PLAIN)
     @Transactional
