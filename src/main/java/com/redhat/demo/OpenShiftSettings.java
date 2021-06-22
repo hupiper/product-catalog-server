@@ -25,7 +25,7 @@ import org.jboss.logging.Logger;
 @ApplicationScoped
 public class OpenShiftSettings {
 
-    private static final Logger LOGGER = Logger.getLogger("ListenerBean");
+    private static final Logger LOGGER = Logger.getLogger(OpenShiftSettings.class);
 
     @Inject
     OpenShiftClient openshiftClient;
@@ -52,6 +52,17 @@ public class OpenShiftSettings {
             return;
         }
 
+        overrideCorsSetting();
+
+        LOGGER.infof("Using host %s for cors origin",
+                ConfigProvider.getConfig().getValue("quarkus.http.cors.origins", String.class));
+    }
+
+    void onStop(@Observes ShutdownEvent ev) {
+        LOGGER.info("The application is stopping...");
+    }
+
+    private void overrideCorsSetting() {
         // Look for route with label endpoint:client
         if (openshiftClient.getMasterUrl() == null) {
             LOGGER.info("Kubernetes context is not available");
@@ -64,12 +75,18 @@ public class OpenShiftSettings {
             List<Route> routes = null;
             try {
                 routes = openshiftClient.routes().withLabelSelector(selector).list().getItems();
+                //Debug mockserver
+                if (routes == null || routes.isEmpty()) {
+                    routes = openshiftClient.routes().list().getItems();
+                }
             } catch (Exception e) {
                 LOGGER.info("Unexpected error occurred retrieving routes, using environment variable CORS_ORIGIN", e);
                 return;
             }
-            if (routes == null || routes.size() == 0) {
+            if (routes == null || routes.isEmpty()) {
                 LOGGER.info("No routes found with label 'endpoint:client', using environment variable CORS_ORIGIN");
+                //Temp debugging
+                System.setProperty("quarkus.http.cors.origins", "*");
                 return;
             } else if (routes.size() > 1) {
                 LOGGER.warn("More then one route found with 'endpoint:client', using first one");
@@ -84,11 +101,5 @@ public class OpenShiftSettings {
             String corsOrigin = (tls ? "https" : "http") + "://" + host;
             System.setProperty("quarkus.http.cors.origins", corsOrigin);
         }
-        LOGGER.infof("Using host %s for cors origin",
-                ConfigProvider.getConfig().getValue("quarkus.http.cors.origins", String.class));
-    }
-
-    void onStop(@Observes ShutdownEvent ev) {
-        LOGGER.info("The application is stopping...");
     }
 }
