@@ -29,6 +29,7 @@
     <sonar.issue.ignore.multicriteria.e1.ruleKey>java:S3252</sonar.issue.ignore.multicriteria.e1.ruleKey>
     <sonar.projectKey>product-catalog-server</sonar.projectKey>
     <surefire-plugin.version>2.22.0</surefire-plugin.version>
+    <sonar.coverage.exclusions>**/com/redhat/demo/OpenShiftSettings.java</sonar.coverage.exclusions>
   </properties>
   <dependencyManagement>
     <dependencies>
