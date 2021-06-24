@@ -30,6 +30,12 @@
     <sonar.projectKey>product-catalog-server</sonar.projectKey>
     <surefire-plugin.version>2.22.0</surefire-plugin.version>
     <sonar.coverage.exclusions>**/com/redhat/demo/OpenShiftSettings.java</sonar.coverage.exclusions>
+    <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+    <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+    <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco-report</sonar.jacoco.reportPath>
+    <sonar.language>java</sonar.language>
+    <quarkus.jacoco.excludes>**/com/redhat/demo/OpenShiftSettings.java</quarkus.jacoco.excludes>
+
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -135,6 +141,11 @@
         <groupId>io.quarkus</groupId>
         <artifactId>quarkus-test-kubernetes-client</artifactId>
         <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-jacoco</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
   <build>
@@ -285,25 +296,6 @@
               <consoleOutput>true</consoleOutput>
               <failsOnError>false</failsOnError>
             </configuration>
-          </plugin>
-          <plugin>
-            <groupId>org.jacoco</groupId>
-            <artifactId>jacoco-maven-plugin</artifactId>
-            <version>0.8.5</version>
-            <executions>
-              <execution>
-                <id>prepare-agent</id>
-                <goals>
-                  <goal>prepare-agent</goal>
-                </goals>
-              </execution>
-              <execution>
-                <id>report</id>
-                <goals>
-                  <goal>report</goal>
-                </goals>
-              </execution>
-            </executions>
           </plugin>
           <plugin>
             <groupId>org.owasp</groupId>
