@@ -32,8 +32,8 @@
     <sonar.coverage.exclusions>**/com/redhat/demo/OpenShiftSettings.java</sonar.coverage.exclusions>
     <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
     <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-    <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco-report</sonar.jacoco.reportPath>
-    <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/../target/jacoco-report/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+    <!-- <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco-report</sonar.jacoco.reportPath> -->
+    <!-- <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/../target/jacoco-report/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths> -->
     <sonar.dependencyCheck.jsonReportPath>target/dependency-check-report.json</sonar.dependencyCheck.jsonReportPath>
     <sonar.java.pmd.reportPaths>target/pmd.xml</sonar.java.pmd.reportPaths>
     <sonar.java.checkstyle.reportPaths>target/checkstyle-result.xml</sonar.java.checkstyle.reportPaths>
