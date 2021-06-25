@@ -2,6 +2,7 @@ package com.redhat.demo;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.json.Json;
+import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -21,8 +22,9 @@ import org.eclipse.microprofile.metrics.annotation.Counted;
 import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.quarkus.security.Authenticated;
 
@@ -32,6 +34,8 @@ import io.quarkus.security.Authenticated;
 @Consumes("application/json")
 @Tag(name = "Categories", description = "An API to manipulate the categories in the catalog")
 public class CategoryResource {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Category.class);
 
     @GET
     @Counted(name = "countGetCategory", description = "How many get categories calls have been performed.", tags = {"type=counter", "api=category", "method=getCategory"})
@@ -55,25 +59,23 @@ public class CategoryResource {
 
     @POST
     @Authenticated
+    @Transactional
     @Operation(summary = "Create category", description = "Create a new category")
     @Counted(name = "countCreateCategory", description = "How many create category calls have been performed.", tags = {"type=counter", "api=category", "method=createCategory"})
     @Timed(name = "perfCreateCategory", description = "A measure of how long it takes to create a category.", unit = MetricUnits.MILLISECONDS, tags = {"type=perf", "api=category", "method=createCategory"})
     public Response create(Category category) {
-        try {
-            category.persist();
-            return Response.ok(category).status(201).build();
-        } catch (Exception e) {
-            return Response.serverError().status(500).build();
-        }
+        category.persist();
+        return Response.ok(category).status(201).build();
     }
 
     @PUT
     @Path("{id}")
     @Authenticated
+    @Transactional
     @Operation(summary = "Update category", description = "Update an existing category")
     @Counted(name = "countUpdateCategory", description = "How many update category calls have been performed.", tags = {"type=counter", "api=category", "method=updateCategory"})
     @Timed(name = "perfUpdateCategory", description = "A measure of how long it takes to update a category.", unit = MetricUnits.MILLISECONDS, tags = {"type=perf", "api=category", "method=updateCategory"})
-    public Category update(@PathParam Integer id, Category category) {
+    public Category update(@PathParam("id") Integer id, Category category) {
         if (category.name == null) {
             throw new WebApplicationException("Category Name was not set on request.", 422);
         }
@@ -87,10 +89,15 @@ public class CategoryResource {
     @DELETE
     @Path("{id}")
     @Authenticated
+    @Transactional
     @Operation(summary = "Delete category", description = "Delete a category")
     @Counted(name = "countDeleteCategory", description = "How many delete category calls have been performed.", tags = {"type=counter", "api=category", "method=deleteCategory"})
     @Timed(name = "perfDeleteCategory", description = "A measure of how long it takes to delete a category.", unit = MetricUnits.MILLISECONDS, tags = {"type=perf", "api=category", "method=deleteCategory"})
-    public Response delete(@PathParam Integer id) {
+    public Response delete(@PathParam("id") Integer id) {
+        LOGGER.info("Deleting category " + id);
+        if (id == null) {
+            throw new WebApplicationException("Category ID was not set on request.", 422);
+        }
         Category category = Category.findById(id);
         if (category != null) {
             category.delete();

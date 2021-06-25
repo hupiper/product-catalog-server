@@ -31,7 +31,7 @@ import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 @Table(name = "users")
 public class User extends PanacheEntityBase {
 
-    private static final Logger log = LoggerFactory.getLogger("User");
+    private static final Logger log = LoggerFactory.getLogger(User.class);
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

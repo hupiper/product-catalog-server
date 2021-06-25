@@ -19,4 +19,5 @@ INSERT INTO `products` (`id`, `name`, `description`, `price`, `category_id`, `cr
 (12, 'LG V20', 'Superb dual camera, Space-grade Aluminum build, fantastic sound quality', 749, 1, PARSEDATETIME('2016-12-20 14:02:28','yyyy-MM-dd HH:mm:ss','en'), PARSEDATETIME('2016-12-20 07:02:28','yyyy-MM-dd HH:mm:ss','en'));
 
 INSERT INTO `users` (`id`, `email`, `password_hash`, `salt`, `iteration_count`, `created_at`) VALUES
-(1, 'demo@demo.com', '/TVyvAPSryEfGlyEFmNq14Q/prbJU7U=', 'YYONLJPUCmUeISgDxyTREg==', 10, PARSEDATETIME('2019-11-23 02:54:42','yyyy-MM-dd HH:mm:ss','en'));
+(1, 'demo@demo.com', 'XZG3HXXvxlgZv3HYkL8Uy4bmwEUZZMY=', 'ywfFGH9XkVAoAXzxHtQNfA==', 10, PARSEDATETIME('2019-11-23 02:54:42','yyyy-MM-dd HH:mm:ss','en')),
+(2, 'test@demo.com', 'XZG3HXXvxlgZv3HYkL8Uy4bmwEUZZMY=', 'ywfFGH9XkVAoAXzxHtQNfA==', 10, PARSEDATETIME('2019-11-23 02:54:42','yyyy-MM-dd HH:mm:ss','en'));

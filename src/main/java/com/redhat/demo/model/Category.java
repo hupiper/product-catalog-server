@@ -20,7 +20,6 @@ public class Category extends PanacheEntityBase {
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @NotNull
     public Integer id;
 
     @Column(length = 128)
