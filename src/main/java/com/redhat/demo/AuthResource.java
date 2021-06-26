@@ -23,9 +23,7 @@ import com.redhat.demo.model.User;
 
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jboss.logging.Logger;
 
 @Path("/api/auth")
 @ApplicationScoped
@@ -34,7 +32,7 @@ import org.slf4j.LoggerFactory;
 @Tag(name = "Authentication", description = "An API to manage user authentication and authorization")
 public class AuthResource {
 
-    private static final Logger log = LoggerFactory.getLogger("AuthResource");
+    private static final Logger log = Logger.getLogger("AuthResource");
 
     @GET
     @Path("/user")

@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.json.Json;
 import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -19,8 +18,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ExceptionMapper;
-import javax.ws.rs.ext.Provider;
 
 import com.redhat.demo.model.Category;
 import com.redhat.demo.model.Product;
@@ -31,11 +28,9 @@ import org.eclipse.microprofile.metrics.annotation.Timed;
 
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-
+import org.jboss.logging.Logger;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
 import org.jboss.resteasy.annotations.jaxrs.QueryParam;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
@@ -51,7 +46,7 @@ import io.quarkus.security.Authenticated;
 @Tag(name = "Products", description = "An API to manipulate the products in the catalog")
 public class ProductResource {
 
-    private static final Logger log = LoggerFactory.getLogger("ProductResource");
+    private static final Logger log = Logger.getLogger(ProductResource.class);
 
     @GET
     @Operation(summary = "Get product list", description = "Get product list with support for paging and ordering")

@@ -34,7 +34,7 @@ import io.quarkus.security.Authenticated;
 @Tag(name = "Categories", description = "An API to manipulate the categories in the catalog")
 public class CategoryResource {
 
-    private static final Logger LOGGER = Logger.getLogger(CategoryResource.class);
+    private static final Logger log = Logger.getLogger(CategoryResource.class);
 
     @GET
     @Counted(name = "countGetCategory", description = "How many get categories calls have been performed.", tags = {"type=counter", "api=category", "method=getCategory"})
@@ -82,7 +82,7 @@ public class CategoryResource {
             throw new WebApplicationException("Category Name was not set on request.", 422);
         }
         if (category.id == null || !category.id.equals(id)) {
-            LOGGER.debugf("Path ID is %d whereas category ID is %d", id, category.id);
+            log.debugf("Path ID is %d whereas category ID is %d", id, category.id);
             throw new WebApplicationException("Category ID is not equal to persisted category ID.", 422);
         }
         category = category.getEntityManager().merge(category);
@@ -99,7 +99,7 @@ public class CategoryResource {
     @Counted(name = "countDeleteCategory", description = "How many delete category calls have been performed.", tags = {"type=counter", "api=category", "method=deleteCategory"})
     @Timed(name = "perfDeleteCategory", description = "A measure of how long it takes to delete a category.", unit = MetricUnits.MILLISECONDS, tags = {"type=perf", "api=category", "method=deleteCategory"})
     public Response delete(@PathParam("id") Integer id) {
-        LOGGER.info("Deleting category " + id);
+        log.info("Deleting category " + id);
         if (id == null) {
             throw new WebApplicationException("Category ID was not set on request.", 422);
         }

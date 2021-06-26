@@ -18,8 +18,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jboss.logging.Logger;
 import org.wildfly.security.password.PasswordFactory;
 import org.wildfly.security.password.interfaces.BCryptPassword;
 import org.wildfly.security.password.spec.EncryptablePasswordSpec;
@@ -31,7 +30,7 @@ import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 @Table(name = "users")
 public class User extends PanacheEntityBase {
 
-    private static final Logger log = LoggerFactory.getLogger(User.class);
+    private static final Logger LOGGER = Logger.getLogger(User.class);
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -77,7 +76,7 @@ public class User extends PanacheEntityBase {
             this.passwordHash = Base64.getEncoder().encodeToString(bCryptPassword.getHash());
             this.salt = Base64.getEncoder().encodeToString(bCryptPassword.getSalt());
             this.iterations = bCryptPassword.getIterationCount();
-            log.info("hash: " + this.passwordHash + ", salt:" + this.salt + ", iterations:" + this.iterations);
+            LOGGER.info("hash: " + this.passwordHash + ", salt:" + this.salt + ", iterations:" + this.iterations);
         } catch (final InvalidKeySpecException e) {
             throw new RuntimeException("Password encryption failed, invalid key spec", e);
         } catch (final NoSuchAlgorithmException e) {
