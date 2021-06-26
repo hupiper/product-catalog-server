@@ -30,6 +30,8 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.jboss.logging.Logger;
 
+import io.quarkus.security.Authenticated;
+
 @Path("/api/auth")
 @ApplicationScoped
 @Produces(MediaType.APPLICATION_JSON)
@@ -51,6 +53,7 @@ public class AuthResource {
     }
 
     @POST
+    @Authenticated
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Login", description = "Authenticate a user")

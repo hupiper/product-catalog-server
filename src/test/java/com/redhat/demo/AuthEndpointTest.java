@@ -1,5 +1,6 @@
 package com.redhat.demo;
 
+import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -30,20 +31,30 @@ public class AuthEndpointTest {
             .request()
             .post("/api/auth/register")
                 .then()
-                    .statusCode(200);
+                    .statusCode(HttpStatus.SC_OK);
     }
 
     @Test
     @Order(2)
     public void login() {
+
         given()
-            .auth().basic("test@demo.com","password")
-            // .header("Content-Type", "application/x-www-form-urlencoded")
-            // .formParam("email", USER)
-            // .formParam("password", PASSWORD)
+            .auth().basic(USER,PASSWORD)
+            .header("Content-Type", "application/x-www-form-urlencoded")
+            .formParam("email", USER)
+            .formParam("password", PASSWORD)
             .post("/api/auth")
             .then()
-                .statusCode(200);
+                .statusCode(HttpStatus.SC_OK);
+
+        given()
+            .auth().basic(USER,"notpassword")
+            .header("Content-Type", "application/x-www-form-urlencoded")
+            .formParam("email", USER)
+            .formParam("password", "notpassword")
+            .post("/api/auth")
+            .then()
+                .statusCode(HttpStatus.SC_UNAUTHORIZED);
     }
 
 }
