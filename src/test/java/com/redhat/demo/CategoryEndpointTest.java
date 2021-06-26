@@ -58,7 +58,7 @@ public class CategoryEndpointTest {
 
     @Test
     @Order(4)
-    public void testCreateCategory() {
+    public void testCreateCategoryEndpoint() {
       Category category = new Category();
       category.name = "Test category";
       category.description = "Test category";
@@ -80,12 +80,11 @@ public class CategoryEndpointTest {
         .delete("/api/category/{id}")
         .then()
           .statusCode(204);
-
     }
 
     @Test
     @Order(5)
-    public void testUpdateCategory() {
+    public void testUpdateCategoryEndpoint() {
       final String name = "test";
 
       Category category = Category.findById(1);
