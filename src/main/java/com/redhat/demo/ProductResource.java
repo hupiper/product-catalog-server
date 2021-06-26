@@ -149,7 +149,6 @@ public class ProductResource {
     @Counted(name = "countMassDelete", description = "How many get mass product delete calls have been performed.", tags = {"type=counter", "api=product", "method=massDeleteProduct"})
     @Timed(name = "perfMassDelete", description = "A measure of how long it takes to mass delete products.", unit = MetricUnits.MILLISECONDS, tags = {"type=perf", "api=product", "method=massDeleteProduct"})
     public Response massDelete(@FormParam("del_ids[]") List<Integer> productIds) {
-        System.out.println(productIds.size());
         try {
             for(Integer id: productIds) {
                 Product.delete("id", id);
@@ -206,10 +205,11 @@ public class ProductResource {
     @DELETE
     @Path("{id}")
     @Authenticated
+    @Transactional
     @Operation(summary = "Delete product", description = "Delete a single product by ID")
     @Counted(name = "countDeleteProduct", description = "How many delete a product calls have been performed.", tags = {"type=counter", "api=product", "method=deleteProduct"})
     @Timed(name = "perfDeleteProduct", description = "A measure of how long it takes to delete a product.", unit = MetricUnits.MILLISECONDS, tags = {"type=perf", "api=product", "method=deleteProduct"})
-    public Response delete(@PathParam Integer id) {
+    public Response delete(@PathParam("id") Integer id) {
         Product product = Product.findById(id);
         if (product != null) {
             product.delete();
