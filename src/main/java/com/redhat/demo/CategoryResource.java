@@ -1,7 +1,9 @@
 package com.redhat.demo;
 
+import java.sql.Date;
+import java.time.LocalDateTime;
+
 import javax.enterprise.context.ApplicationScoped;
-import javax.json.Json;
 import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -12,8 +14,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ExceptionMapper;
-import javax.ws.rs.ext.Provider;
 
 import com.redhat.demo.model.Category;
 
@@ -22,9 +22,8 @@ import org.eclipse.microprofile.metrics.annotation.Counted;
 import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
+import org.jboss.logging.Logger;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import io.quarkus.security.Authenticated;
 
@@ -35,7 +34,7 @@ import io.quarkus.security.Authenticated;
 @Tag(name = "Categories", description = "An API to manipulate the categories in the catalog")
 public class CategoryResource {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Category.class);
+    private static final Logger LOGGER = Logger.getLogger(CategoryResource.class);
 
     @GET
     @Counted(name = "countGetCategory", description = "How many get categories calls have been performed.", tags = {"type=counter", "api=category", "method=getCategory"})
@@ -64,6 +63,9 @@ public class CategoryResource {
     @Counted(name = "countCreateCategory", description = "How many create category calls have been performed.", tags = {"type=counter", "api=category", "method=createCategory"})
     @Timed(name = "perfCreateCategory", description = "A measure of how long it takes to create a category.", unit = MetricUnits.MILLISECONDS, tags = {"type=perf", "api=category", "method=createCategory"})
     public Response create(Category category) {
+        category.created = new Date(System.currentTimeMillis());
+        category.modified = LocalDateTime.now();
+
         category.persist();
         return Response.ok(category).status(201).build();
     }
@@ -80,8 +82,11 @@ public class CategoryResource {
             throw new WebApplicationException("Category Name was not set on request.", 422);
         }
         if (category.id == null || !category.id.equals(id)) {
+            LOGGER.debugf("Path ID is %d whereas category ID is %d", id, category.id);
             throw new WebApplicationException("Category ID is not equal to persisted category ID.", 422);
         }
+        category = category.getEntityManager().merge(category);
+        category.modified = LocalDateTime.now();
         category.persist();
         return category;
     }
@@ -104,21 +109,6 @@ public class CategoryResource {
             return Response.status(204).build();
         } else {
             return Response.status(404).build();
-        }
-    }
-
-    @Provider
-    public static class ErrorMapper implements ExceptionMapper<Exception> {
-
-        @Override
-        public Response toResponse(Exception exception) {
-            int code = 500;
-            if (exception instanceof WebApplicationException) {
-                code = ((WebApplicationException) exception).getResponse().getStatus();
-            }
-            return Response.status(code)
-                    .entity(Json.createObjectBuilder().add("error", exception.getMessage()).add("code", code).build())
-                    .build();
         }
     }
 }

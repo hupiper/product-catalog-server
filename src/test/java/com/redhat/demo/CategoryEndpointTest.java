@@ -4,6 +4,7 @@ import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 
+import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -80,6 +81,25 @@ public class CategoryEndpointTest {
         .then()
           .statusCode(204);
 
+    }
+
+    @Test
+    @Order(5)
+    public void testUpdateCategory() {
+      final String name = "test";
+
+      Category category = Category.findById(1);
+      category.name = name;
+
+      given()
+        .auth().basic("test@demo.com", "Welcome1")
+        .contentType("application/json")
+        .body(JsonbBuilder.create().toJson(category))
+        .pathParam("id", category.id)
+        .put("/api/category/{id}")
+        .then()
+          .statusCode(HttpStatus.SC_OK)
+          .body("name", equalTo(name));
     }
 
 }
