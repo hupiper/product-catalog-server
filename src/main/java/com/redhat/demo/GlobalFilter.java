@@ -31,8 +31,7 @@ public class GlobalFilter implements ContainerRequestFilter, ExceptionMapper<Exc
     @Override
     public Response toResponse(Exception exception) {
 
-        exception.printStackTrace();
-        LOGGER.error("Unexpected exception");
+        LOGGER.error("Unexpected exception", exception);
         int code = 500;
         if (exception instanceof WebApplicationException) {
             code = ((WebApplicationException) exception).getResponse().getStatus();

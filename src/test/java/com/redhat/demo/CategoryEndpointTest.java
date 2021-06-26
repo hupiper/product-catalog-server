@@ -13,12 +13,12 @@ import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import static io.restassured.RestAssured.given;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.equalTo;
 
 import javax.json.bind.JsonbBuilder;
 
 import com.redhat.demo.model.Category;
 
-import static org.hamcrest.CoreMatchers.equalTo;
 
 @QuarkusTest
 @QuarkusTestResource(H2DatabaseTestResource.class)

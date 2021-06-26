@@ -1,6 +1,9 @@
 package com.redhat.demo;
 
+import java.time.LocalDateTime;
+
 import javax.enterprise.context.ApplicationScoped;
+import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -28,6 +31,7 @@ import io.quarkus.security.Authenticated;
 public class UserResource {
 
     @GET
+    @Authenticated
     @Path("{id}")
     @Operation(summary = "Get user by ID", description = "Get specific user by it's ID")
     public User getUser(@PathParam("id") Integer id) {
@@ -38,19 +42,10 @@ public class UserResource {
         return user;
     }
 
-    @POST
-    @Operation(summary = "Create user", description = "Create a new user")
-    public Response create(User user) {
-        if (user.id != null) {
-            throw new WebApplicationException("Id was invalidly set on request.", 422);
-        }
-        user.persist();
-        return Response.ok(user).status(201).build();
-    }
-
     @PUT
     @Path("{id}")
     @Authenticated
+    @Transactional
     @Operation(summary = "Update user", description = "Update an existing user")
     public User update(@PathParam Integer id, User user) {
         if (user.email == null) {
@@ -69,6 +64,7 @@ public class UserResource {
     @DELETE
     @Path("{id}")
     @Authenticated
+    @Transactional
     @Operation(summary = "Delete user", description = "Delete a user")
     public Response delete(@PathParam Integer id) {
         User user = User.findById(id);

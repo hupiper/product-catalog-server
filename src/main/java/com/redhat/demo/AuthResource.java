@@ -1,9 +1,11 @@
 package com.redhat.demo;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.time.LocalDateTime;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -12,11 +14,14 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.container.ContainerResponseContext;
+import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import com.redhat.demo.model.User;
@@ -50,6 +55,7 @@ public class AuthResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Login", description = "Authenticate a user")
     public LoginResult authenticate(@Context SecurityContext sc) {
+        log.info("Handling login");
         Principal userPrincipal = sc.getUserPrincipal();
         if (userPrincipal !=null) {
             User user = User.find("email", sc.getUserPrincipal().toString()).firstResult();
@@ -60,6 +66,7 @@ public class AuthResource {
                 return new LoginResult("Invalid user/password", null);
             }
         } else {
+            log.info("No user principal set, login failed");
             return new LoginResult("Authentication failed", null);
         }
     }
@@ -99,21 +106,6 @@ public class AuthResource {
         }
     }
 
-    @Provider
-    public static class ErrorMapper implements ExceptionMapper<Exception> {
-
-        @Override
-        public Response toResponse(Exception exception) {
-            int code = 500;
-            if (exception instanceof WebApplicationException) {
-                code = ((WebApplicationException) exception).getResponse().getStatus();
-            }
-            return Response.status(code).entity(exception.getMessage()).build();
-            //        .entity(Json.createObjectBuilder().add("error", exception.getMessage()).add("code", code).build())
-            //        .build();
-        }
-    }
-
     public class LoginResult {
         public String message;
         public SecureUser user;
@@ -122,7 +114,8 @@ public class AuthResource {
 
         public LoginResult(String message, User user) {
             this.message = message;
-            this.user = new SecureUser(user);
+            if (user != null)
+                this.user = new SecureUser(user);
         }
 
     }
