@@ -115,9 +115,13 @@ public class ProductResource {
         @FormParam("price") Double price
         ) {
 
+        if (categoryId == null) {
+            throw new WebApplicationException("The category_id parameter is required", 400);
+        }
+
         Category category = Category.findById(categoryId);
         if (category == null) {
-            return new ProductResult(false, "Category for id " + categoryId +" was not found", null);
+            throw new WebApplicationException("Category for id '" + categoryId +"'' was not found", 400);
         }
         Product product = new Product();
 
@@ -176,15 +180,19 @@ public class ProductResource {
         @FormParam("category_id") Integer categoryId,
         @FormParam("price") Double price
         ) {
+
+        if (categoryId == null) {
+            throw new WebApplicationException("The category_id parameter is required", 400);
+        }
         Category category = Category.findById(categoryId);
         if (category == null) {
-            return new ProductResult(false, "Category for id " + categoryId +" was not found", null);
+            throw new WebApplicationException("The category_id parameter " + categoryId + " could not be found", 400);
         }
         if (name == null) {
-            return new ProductResult(false, "Product name must have a value", null);
+            throw new WebApplicationException("The name parameter is required", 400);
         }
         if (id == null || !id.equals(formId)) {
-            return new ProductResult(false, "Resource ID must be valid and match product id", null);
+            throw new WebApplicationException("Resource ID must be valid and match product id", 400);
         }
 
         Product product = Product.findById(id);

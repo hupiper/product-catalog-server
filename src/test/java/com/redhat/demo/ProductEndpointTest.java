@@ -69,6 +69,33 @@ public class ProductEndpointTest {
     @Test
     @Order(4)
     public void testCreateProductEndpoint() {
+      // Test bad request, missing category id
+      given()
+        .auth().basic("test@demo.com", "Welcome1")
+        .header("Content-Type", "application/x-www-form-urlencoded")
+        .formParam("name", "Test product")
+        .formParam("description", "Test product")
+        .formParam("price", 100.00)
+        .request()
+        .post("/api/product")
+        .then()
+          .statusCode(400);
+
+      // Test bad request, n category found
+      given()
+        .auth().basic("test@demo.com", "Welcome1")
+        .header("Content-Type", "application/x-www-form-urlencoded")
+        .formParam("name", "Test product")
+        .formParam("description", "Test product")
+        .formParam("category_id", 99)
+        .formParam("price", 100.00)
+        .request()
+        .post("/api/product")
+        .then()
+          .statusCode(400);
+
+
+      // Valid create request
       Integer id = given()
         .auth().basic("test@demo.com", "Welcome1")
         .header("Content-Type", "application/x-www-form-urlencoded")
@@ -108,6 +135,35 @@ public class ProductEndpointTest {
         .put("/api/product/{id}")
         .then()
           .statusCode(200);
+
+      // Missing name
+      given()
+          .auth().basic("test@demo.com", "Welcome1")
+          .header("Content-Type", "application/x-www-form-urlencoded")
+          .pathParam("id", 1)
+          .formParam("id", 1)
+          .formParam("description", "Test product")
+          .formParam("description", "Test product")
+          .formParam("category_id", 1)
+          .formParam("price", 100.00)
+          .request()
+          .put("/api/product/{id}")
+          .then()
+            .statusCode(400);
+
+        // Missing category
+        given()
+            .auth().basic("test@demo.com", "Welcome1")
+            .header("Content-Type", "application/x-www-form-urlencoded")
+            .pathParam("id", 1)
+            .formParam("id", 1)
+            .formParam("description", "Test product")
+            .formParam("description", "Test product")
+            .formParam("price", 100.00)
+            .request()
+            .put("/api/product/{id}")
+            .then()
+              .statusCode(400);
     }
 
     @Test
