@@ -199,8 +199,8 @@
 					"script": {
 						"id": "86d5ae6f-f46b-49bf-a60b-bacabed03f4e",
 						"exec": [
-							"tests[\"Is status code 403\"] = ",
-							"    responseCode.code === 403;"
+							"tests[\"Is status code 401\"] = ",
+							"    responseCode.code === 401;"
 						],
 						"type": "text/javascript"
 					}
