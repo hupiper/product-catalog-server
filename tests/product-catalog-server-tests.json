@@ -192,55 +192,15 @@
 			"response": []
 		},
 		{
-			"name": "Get Missing User",
+			"name": "Get User Unauthorized",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"id": "86d5ae6f-f46b-49bf-a60b-bacabed03f4e",
 						"exec": [
-							"tests[\"Is status code 404\"] = ",
-							"    responseCode.code === 404;"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{scheme}}://{{host}}/api/user/8",
-					"protocol": "{{scheme}}",
-					"host": [
-						"{{host}}"
-					],
-					"path": [
-						"api",
-						"user",
-						"8"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Existing User",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "86d5ae6f-f46b-49bf-a60b-bacabed03f4e",
-						"exec": [
-							"pm.test(\"response is ok\", function () {",
-							"    pm.response.to.have.status(200);",
-							"});",
-							"",
-							"pm.test(\"Data is correct\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.id).to.eql(1);",
-							"    pm.expect(jsonData.email).to.eql(\"demo@demo.com\");",
-							"});"
+							"tests[\"Is status code 403\"] = ",
+							"    responseCode.code === 403;"
 						],
 						"type": "text/javascript"
 					}
@@ -258,7 +218,7 @@
 					"path": [
 						"api",
 						"user",
-						"1"
+						"8"
 					]
 				}
 			},
