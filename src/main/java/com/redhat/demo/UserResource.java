@@ -1,13 +1,10 @@
 package com.redhat.demo;
 
-import java.time.LocalDateTime;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -31,7 +28,6 @@ import io.quarkus.security.Authenticated;
 public class UserResource {
 
     @GET
-    @Authenticated
     @Path("{id}")
     @Operation(summary = "Get user by ID", description = "Get specific user by it's ID")
     public User getUser(@PathParam("id") Integer id) {

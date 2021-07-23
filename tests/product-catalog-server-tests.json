@@ -192,15 +192,15 @@
 			"response": []
 		},
 		{
-			"name": "Get User Unauthorized",
+			"name": "Get User Invalid User",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"id": "86d5ae6f-f46b-49bf-a60b-bacabed03f4e",
 						"exec": [
-							"tests[\"Is status code 401\"] = ",
-							"    responseCode.code === 401;"
+							"tests[\"Is status code 404\"] = ",
+							"    responseCode.code === 404;"
 						],
 						"type": "text/javascript"
 					}
