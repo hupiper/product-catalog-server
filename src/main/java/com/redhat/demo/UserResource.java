@@ -29,6 +29,7 @@ public class UserResource {
 
     @GET
     @Path("{id}")
+    @Authenticated
     @Operation(summary = "Get user by ID", description = "Get specific user by it's ID")
     public User getUser(@PathParam("id") Integer id) {
         User user = User.findById(id);
