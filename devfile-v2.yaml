@@ -1,0 +1,84 @@
+commands:
+- exec:
+    commandLine: mvn -Dmaven.repo.local=/home/user/.m2/repository compile
+    component: tools
+    workingDir: $PROJECTS_ROOT
+  id: init-compile
+- exec:
+    commandLine: MAVEN_OPTS="-Xmx256m" && mvn -X -Dmaven.repo.local=/home/user/.m2/repository
+      quarkus:dev -Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager
+    component: tools
+    group:
+      isDefault: true
+      kind: run
+    hotReloadCapable: true
+    workingDir: $PROJECTS_ROOT
+  id: dev-run
+- exec:
+    commandLine: MAVEN_OPTS="-Xmx256m" && mvn -X -Dmaven.repo.local=/home/user/.m2/repository
+      quarkus:dev -Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager
+      -Ddebug=${DEBUG_PORT}
+    component: tools
+    group:
+      isDefault: true
+      kind: debug
+    hotReloadCapable: true
+    workingDir: $PROJECTS_ROOT
+  id: dev-debug
+components:
+- name: tools
+  container:
+    endpoints:
+    - name: http
+      targetPort: 8080
+      attributes:
+        exposure: 'internal'
+    env:
+    - name: MAVEN_OPTS
+      value: -Xmx512m
+    image: registry.access.redhat.com/ubi8/openjdk-11
+    memoryLimit: 1024Mi
+    mountSources: true
+    volumeMounts:
+    - name: m2
+      path: /home/user/.m2
+- name: productdb
+  container:
+    endpoints:
+    - name: productdb
+      targetPort: 3306
+    env:
+      - value: productdb
+        name: MYSQL_USER
+      - value: Demo1234
+        name: MYSQL_PASSWORD
+      - value: productdb
+        name: MYSQL_DATABASE
+    image: registry.redhat.io/rhel8/mariadb-103:1
+    memoryLimit: 1024Mi
+- name: m2
+  volume:
+    size: 3Gi
+events:
+  postStart:
+  - init-compile
+metadata:
+  description: Quarkus with Java
+  displayName: Quarkus Java
+  icon: https://design.jboss.org/quarkus/logo/final/SVG/quarkus_icon_rgb_default.svg
+  language: java
+  name: java-quarkus-product-cata-erad
+  projectType: quarkus
+  tags:
+  - Java
+  - Quarkus
+  version: 1.1.0
+  website: https://quarkus.io
+schemaVersion: 2.0.0
+starterProjects:
+- name: community
+  zip:
+    location: https://code.quarkus.io/d?e=io.quarkus%3Aquarkus-resteasy&e=io.quarkus%3Aquarkus-micrometer&e=io.quarkus%3Aquarkus-smallrye-health&e=io.quarkus%3Aquarkus-openshift&cn=devfile
+- name: redhat-product
+  zip:
+    location: https://code.quarkus.redhat.com/d?e=io.quarkus%3Aquarkus-resteasy&e=io.quarkus%3Aquarkus-smallrye-health&e=io.quarkus%3Aquarkus-openshift
