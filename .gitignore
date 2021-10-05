@@ -15,7 +15,7 @@ bin/
 nb-configuration.xml
 
 # Visual Studio Code
-.vscode
+#.vscode
 
 # OSX
 .DS_Store
@@ -34,3 +34,5 @@ pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
 release.properties
+.odo/env
+.odo/odo-file-index.json
