@@ -1,55 +1,52 @@
-metadata:
-  name: product-catalog-server
-projects:
-  - name: product-catalog-server
-    source:
-      location: 'https://github.com/gnunn-gitops/product-catalog-server.git'
-      type: 'git'
+commands:
+- exec:
+    commandLine: mvn -Dmaven.repo.local=/home/user/.m2/repository compile
+    component: tools
+    workingDir: $PROJECTS_ROOT
+  id: init-compile
+- exec:
+    commandLine: MAVEN_OPTS="-Xmx256m" && mvn -X -Dmaven.repo.local=/home/user/.m2/repository
+      quarkus:dev -Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager
+    component: tools
+    group:
+      isDefault: true
+      kind: run
+    hotReloadCapable: true
+    workingDir: $PROJECTS_ROOT
+  id: dev-run
+- exec:
+    commandLine: MAVEN_OPTS="-Xmx256m" && mvn -X -Dmaven.repo.local=/home/user/.m2/repository
+      quarkus:dev -Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager
+      -Ddebug=${DEBUG_PORT}
+    component: tools
+    group:
+      isDefault: true
+      kind: debug
+    hotReloadCapable: true
+    workingDir: $PROJECTS_ROOT
+  id: dev-debug
 components:
-  - id: redhat/quarkus-java11/latest
-    type: chePlugin
-  - mountSources: true
+- name: tools
+  container:
     endpoints:
-      - name: 8080-tcp
-        port: 8080
-        attributes:
-          path: '/swagger-ui'
-      - name: 'debug'
-        port: 5005
-        attributes:
-          public: 'false'
-    memoryLimit: 1Gi
-    type: dockerimage
-    volumes:
-      - name: m2
-        containerPath: /home/jboss/.m2
-    image: >-
-      registry.redhat.io/codeready-workspaces/plugin-java11-rhel8:latest
-    alias: product-catalog-server
+    - name: http
+      targetPort: 8080
+      attributes:
+        exposure: 'internal'
     env:
-      - value: >-
-          -XX:MaxRAMPercentage=50.0 -XX:+UseParallelGC -XX:MinHeapFreeRatio=10
-          -XX:MaxHeapFreeRatio=20 -XX:GCTimeRatio=4
-          -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true
-          -Xms20m -Djava.security.egd=file:/dev/./urandom
-          -Duser.home=/home/jboss
-        name: JAVA_OPTS
-      - value: $(JAVA_OPTS)
-        name: MAVEN_OPTS
-  - alias: buildah
-    mountSources: true
-    type: dockerimage
-    image: 'registry.redhat.io/rhel8/buildah:latest'
-    memoryLimit: 1Gi
-    command: ['tail']
-    args: ['-f', '/dev/null']
-  - alias: productdb
-    endpoints:
-      - name: productdb
-        port: 3306
+    - name: MAVEN_OPTS
+      value: -Xmx512m
+    image: registry.access.redhat.com/ubi8/openjdk-11
     memoryLimit: 1024Mi
-    type: dockerimage
-    image: 'registry.redhat.io/rhel8/mariadb-103:1'
+    mountSources: true
+    volumeMounts:
+    - name: m2
+      path: /home/user/.m2
+- name: productdb
+  container:
+    endpoints:
+    - name: productdb
+      targetPort: 3306
     env:
       - value: productdb
         name: MYSQL_USER
@@ -57,37 +54,31 @@ components:
         name: MYSQL_PASSWORD
       - value: productdb
         name: MYSQL_DATABASE
-  - id: sonarsource/sonarlint-vscode/latest
-    type: chePlugin
-  # - type: kubernetes
-  #   reference: codeready/mariadb.yaml
-apiVersion: 1.0.0
-commands:
-  - name: Build
-    actions:
-      - workdir: '${CHE_PROJECTS_ROOT}/product-catalog-server'
-        type: exec
-        command: MAVEN_OPTS="-Xmx256m" && mvn package
-        component: product-catalog-server
-  - name: Run
-    actions:
-      - workdir: '${CHE_PROJECTS_ROOT}/product-catalog-server'
-        type: exec
-        command: 'mvn compile quarkus:dev -Dquarkus.profile=dev'
-        component: product-catalog-server
-  - name: Attach remote debugger
-    actions:
-      - type: vscode-launch
-        referenceContent: |
-          {
-            "version": "0.2.0",
-            "configurations": [
-              {
-                "type": "java",
-                "request": "attach",
-                "name": "Attach to Remote Quarkus App",
-                "hostName": "localhost",
-                "port": 5005
-              }
-            ]
-          }
+    image: registry.redhat.io/rhel8/mariadb-103:1
+    memoryLimit: 1024Mi
+- name: m2
+  volume:
+    size: 3Gi
+events:
+  postStart:
+  - init-compile
+metadata:
+  description: Quarkus with Java
+  displayName: Quarkus Java
+  icon: https://design.jboss.org/quarkus/logo/final/SVG/quarkus_icon_rgb_default.svg
+  language: java
+  name: java-quarkus-product-cata-erad
+  projectType: quarkus
+  tags:
+  - Java
+  - Quarkus
+  version: 1.1.0
+  website: https://quarkus.io
+schemaVersion: 2.0.0
+starterProjects:
+- name: community
+  zip:
+    location: https://code.quarkus.io/d?e=io.quarkus%3Aquarkus-resteasy&e=io.quarkus%3Aquarkus-micrometer&e=io.quarkus%3Aquarkus-smallrye-health&e=io.quarkus%3Aquarkus-openshift&cn=devfile
+- name: redhat-product
+  zip:
+    location: https://code.quarkus.redhat.com/d?e=io.quarkus%3Aquarkus-resteasy&e=io.quarkus%3Aquarkus-smallrye-health&e=io.quarkus%3Aquarkus-openshift
