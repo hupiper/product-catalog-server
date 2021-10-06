@@ -1,13 +1,13 @@
 commands:
 - exec:
     commandLine: mvn -Dmaven.repo.local=/home/user/.m2/repository compile
-    component: tools
+    component: server
     workingDir: $PROJECTS_ROOT
   id: init-compile
 - exec:
-    commandLine: MAVEN_OPTS="-Xmx256m" && mvn -X -Dmaven.repo.local=/home/user/.m2/repository
-      quarkus:dev -Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager
-    component: tools
+    commandLine: mvn -Dmaven.repo.local=/home/user/.m2/repository quarkus:dev -Dquarkus.http.host=0.0.0.0
+      -Djava.util.logging.manager=org.jboss.logmanager.LogManager
+    component: server
     group:
       isDefault: true
       kind: run
@@ -15,10 +15,9 @@ commands:
     workingDir: $PROJECTS_ROOT
   id: dev-run
 - exec:
-    commandLine: MAVEN_OPTS="-Xmx256m" && mvn -X -Dmaven.repo.local=/home/user/.m2/repository
-      quarkus:dev -Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager
-      -Ddebug=${DEBUG_PORT}
-    component: tools
+    commandLine: mvn -Dmaven.repo.local=/home/user/.m2/repository quarkus:dev -Dquarkus.http.host=0.0.0.0
+      -Djava.util.logging.manager=org.jboss.logmanager.LogManager -Ddebug=${DEBUG_PORT}
+    component: server
     group:
       isDefault: true
       kind: debug
@@ -26,36 +25,36 @@ commands:
     workingDir: $PROJECTS_ROOT
   id: dev-debug
 components:
-- name: tools
-  container:
+- container:
     endpoints:
     - name: http
       targetPort: 8080
-      attributes:
-        exposure: 'internal'
     env:
     - name: MAVEN_OPTS
-      value: -Xmx512m
+      value: "-Xmx512m"
     image: registry.access.redhat.com/ubi8/openjdk-11
-    memoryLimit: 1024Mi
+    memoryLimit: 768Mi
     mountSources: true
     volumeMounts:
     - name: m2
       path: /home/user/.m2
-- name: productdb
-  container:
+  name: server
+- container:
     endpoints:
     - name: productdb
       targetPort: 3306
+      attributes:
+        exposure: internal
     env:
-      - value: productdb
-        name: MYSQL_USER
-      - value: Demo1234
-        name: MYSQL_PASSWORD
-      - value: productdb
-        name: MYSQL_DATABASE
+    - name: MYSQL_DATABASE
+      value: productdb
+    - name: MYSQL_USER
+      value: productdb
+    - name: MYSQL_PASSWORD
+      value: Demo1234
     image: registry.redhat.io/rhel8/mariadb-103:1
     memoryLimit: 1024Mi
+  name: productdb
 - name: m2
   volume:
     size: 3Gi
@@ -63,17 +62,24 @@ events:
   postStart:
   - init-compile
 metadata:
-  description: Quarkus with Java
-  displayName: Quarkus Java
+  description: Product Catalog Server API
+  displayName: Product Catalog Server
   icon: https://design.jboss.org/quarkus/logo/final/SVG/quarkus_icon_rgb_default.svg
   language: java
-  name: java-quarkus-product-cata-erad
+  name: product-catalog-server
   projectType: quarkus
   tags:
   - Java
   - Quarkus
   version: 1.1.0
   website: https://quarkus.io
+# projects:
+#   - name: product-catalog-server
+#     git:
+#       remotes:
+#         origin: "https://github.com/gnunn-gitops/product-catalog-server.git"
+#       checkoutFrom:
+#         revision: master
 schemaVersion: 2.0.0
 starterProjects:
 - name: community
