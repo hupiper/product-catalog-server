@@ -32,7 +32,7 @@ components:
     env:
     - name: MAVEN_OPTS
       value: "-Xmx512m"
-    image: registry.access.redhat.com/ubi8/openjdk-11
+    image: registry.redhat.io/codeready-workspaces/plugin-java11-rhel8:latest
     memoryLimit: 768Mi
     mountSources: true
     volumeMounts:
