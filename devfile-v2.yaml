@@ -32,7 +32,7 @@ components:
       protocol: http
       path: '/swagger-ui'
     - name: 'debug'
-      port: 5005
+      targetPort: 5005
       exposure: internal
     env:
     - name: MAVEN_OPTS
@@ -79,6 +79,7 @@ metadata:
   - Quarkus
   version: 1.1.0
   website: https://quarkus.io
+# Remove for odo
 projects:
   - name: product-catalog-server
     git:
