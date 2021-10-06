@@ -73,13 +73,13 @@ metadata:
   - Quarkus
   version: 1.1.0
   website: https://quarkus.io
-# projects:
-#   - name: product-catalog-server
-#     git:
-#       remotes:
-#         origin: "https://github.com/gnunn-gitops/product-catalog-server.git"
-#       checkoutFrom:
-#         revision: master
+projects:
+  - name: product-catalog-server
+    git:
+      remotes:
+        origin: "https://github.com/gnunn-gitops/product-catalog-server.git"
+      checkoutFrom:
+        revision: master
 schemaVersion: 2.0.0
 starterProjects:
 - name: community
