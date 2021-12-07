@@ -2,7 +2,7 @@
 
 A simple server application in Quarkus as the server-side back-end with a MariaDB Database.
 
-![alt text](https://raw.githubusercontent.com/hupiper/product-catalog-tools/master/docs/img/screenshot.png)
+![alt text](https://raw.githubusercontent.com/hupiper/product-catalog-tools/main/docs/img/screenshot.png)
 
 For complete information about this project, please see the [product-catalog-tools](https://github.com/hupiper/product-catalog-tools) project.
 

@@ -86,7 +86,7 @@ projects:
       remotes:
         origin: "https://github.com/hupiper/product-catalog-server.git"
       checkoutFrom:
-        revision: master
+        revision: main
 schemaVersion: 2.0.0
 starterProjects:
 - name: community
